@@ -1,0 +1,28 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def iteration(cr, ci, iteration_max):
+    zr,zi = [0,0]
+    i = 0
+    while i<iteration_max and zr*zr + zi*zi<4:
+        i += 1
+        zr_old = zr
+        zr = zr*zr-zi*zi+cr
+        zi = 2*zr_old*zi+ci
+    return i
+
+def mandelbrot(zoom, iteration_max, x, y):
+    image_x = int(zoom*(x[1]-x[0]))
+    image_y = int(zoom*(y[1]-y[0]))
+    image = np.zeros((image_x, image_y, 3), dtype=np.uint8)
+    for i in range(image_x):
+        for j in range(image_y):
+            mandel = iteration(i/zoom+x[0], j/zoom+y[0], iteration_max)
+            image[i, j] = (0,0,(mandel<iteration_max)*(mandel*255/(iteration_max/4)))
+    return image
+
+iteration_max = 50
+zoom = 100.
+x= [-2.1,0.6]
+y= [-1.2,1.2]
+plt.imshow(mandelbrot(zoom, iteration_max, x, y))
