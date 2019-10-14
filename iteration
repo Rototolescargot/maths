@@ -1,0 +1,50 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def x_dot(x, A, y):
+    x_dot = np.zeros(len(x))
+    for i in range(len(x)):
+        x_dot[i] = x[i]*((np.dot(A, y))[i]-np.dot(x,np.dot(A,y)))
+    return x_dot
+
+def y_dot(x, B, y):
+    y_dot = np.zeros(len(y))
+    for i in range(len(y)):
+        y_dot[i] = y[i]*((np.dot(x, B))[i]-np.dot(x,np.dot(B,y)))
+    return y_dot
+
+def iteration(x0, y0, A, B, N, h):
+    trajectory = []
+    if abs(sum(x0)-1)>10**-4:
+        raise Exception("the elements of x0 should sum to 1")    
+    if abs(sum(y0)-1)>10**-4:
+        raise Exception("the elements of y0 should sum to 1")
+    x = x0
+    y = y0
+    for i in range(N):
+        x_old = x
+        trajectory.append([x,y])
+        x = x + x_dot(x, A, y)*h
+        y = y + y_dot(x_old, B, y)*h
+    return trajectory
+
+def data(v):
+    v_x = []
+    v_y = []
+    for i in range(len(v)):
+        v_x.append(v[i][0])
+        v_y.append(v[i][1])
+    return v_x, v_y
+
+x0= [0.4, 0.6]
+y0= [0.6, 0.4]
+A = [[1, -1],[-1, 1]]
+N = 1000
+h = 0.1
+B = [[-1, 1],[1, -1]]
+
+v_x, v_y = data(iteration(x0, y0, A, B, N, h))
+
+plt.plot(v_x, v_y)
+plt.axis([0, 1, 0, 1])
+plt.show()
